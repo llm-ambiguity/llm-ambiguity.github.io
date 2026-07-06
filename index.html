@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Primary SEO -->
+  <title>Do LLMs Understand Ambiguity in Text? A Case Study in Open-world Question Answering</title>
+  <meta name="description"
+        content="Do LLMs understand ambiguity? We study GPT-4o and GPT-4o-mini on ambiguous open-domain question answering (AmbigQA) and show that simple, training-free, token-level disambiguation prompts improve accuracy on ambiguous questions.">
+  <meta name="keywords"
+        content="LLM ambiguity, large language models, ambiguity in text, ambiguous question answering, open-domain QA, AmbigQA, GPT-4o, GPT-4o-mini, disambiguation, prompt sensitivity, hallucination, natural language understanding, NLP">
+  <meta name="author" content="Aryan Keluskar, Amrita Bhattacharjee, Huan Liu">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <link rel="canonical" href="https://llm-ambiguity.github.io/">
+
+  <!-- Highwire / Google Scholar citation meta tags -->
+  <meta name="citation_title" content="Do LLMs Understand Ambiguity in Text? A Case Study in Open-world Question Answering">
+  <meta name="citation_author" content="Keluskar, Aryan">
+  <meta name="citation_author" content="Bhattacharjee, Amrita">
+  <meta name="citation_author" content="Liu, Huan">
+  <meta name="citation_author_institution" content="School of Computing and AI, Arizona State University">
+  <meta name="citation_publication_date" content="2024/11/19">
+  <meta name="citation_conference_title" content="2024 IEEE International Conference on Big Data (BigData)">
+  <meta name="citation_journal_title" content="2024 IEEE International Conference on Big Data (BigData)">
+  <meta name="citation_firstpage" content="7485">
+  <meta name="citation_lastpage" content="7490">
+  <meta name="citation_publisher" content="IEEE">
+  <meta name="citation_arxiv_id" content="2411.12395">
+  <meta name="citation_pdf_url" content="https://arxiv.org/pdf/2411.12395">
+  <meta name="citation_abstract_html_url" content="https://arxiv.org/abs/2411.12395">
+  <meta name="citation_keywords" content="ambiguity; large language models; question answering; disambiguation; prompt sensitivity">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Do LLMs Understand Ambiguity in Text? A Case Study in Open-world Question Answering">
+  <meta property="og:description"
+        content="Simple, training-free, token-level disambiguation prompts improve GPT-4o / GPT-4o-mini accuracy on ambiguous open-domain question answering.">
+  <meta property="og:url" content="https://llm-ambiguity.github.io/">
+  <meta property="og:site_name" content="Do LLMs Understand Ambiguity in Text?">
+  <meta property="og:image" content="https://llm-ambiguity.github.io/static/images/problem.png">
+  <meta property="og:image:alt" content="Ambiguity in open-domain question answering and how we disambiguate it for LLM QA.">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Do LLMs Understand Ambiguity in Text?">
+  <meta name="twitter:description"
+        content="A case study in open-world QA: training-free disambiguation prompts improve GPT-4o / GPT-4o-mini on ambiguous questions.">
+  <meta name="twitter:image" content="https://llm-ambiguity.github.io/static/images/problem.png">
+
+  <!-- JSON-LD: Scholarly Article -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "headline": "Do LLMs Understand Ambiguity in Text? A Case Study in Open-world Question Answering",
+    "name": "Do LLMs Understand Ambiguity in Text? A Case Study in Open-world Question Answering",
+    "abstract": "Ambiguity in natural language poses significant challenges to Large Language Models (LLMs) used for open-domain question answering. Using open-domain QA as a test case, we compare off-the-shelf and few-shot LLM performance, focusing on the impact of explicit disambiguation strategies. We demonstrate how simple, training-free, token-level disambiguation methods may be effectively used to improve LLM performance for ambiguous question answering tasks.",
+    "author": [
+      { "@type": "Person", "name": "Aryan Keluskar", "affiliation": { "@type": "Organization", "name": "Arizona State University" } },
+      { "@type": "Person", "name": "Amrita Bhattacharjee", "affiliation": { "@type": "Organization", "name": "Arizona State University" } },
+      { "@type": "Person", "name": "Huan Liu", "affiliation": { "@type": "Organization", "name": "Arizona State University" } }
+    ],
+    "datePublished": "2024-11-19",
+    "publisher": { "@type": "Organization", "name": "IEEE" },
+    "pagination": "7485-7490",
+    "isPartOf": { "@type": "PublicationEvent", "name": "2024 IEEE International Conference on Big Data (BigData)" },
+    "keywords": "ambiguity, large language models, question answering, disambiguation, prompt sensitivity, AmbigQA, GPT-4o",
+    "identifier": { "@type": "PropertyValue", "propertyID": "arXiv", "value": "arXiv:2411.12395" },
+    "url": "https://llm-ambiguity.github.io/",
+    "sameAs": [
+      "https://arxiv.org/abs/2411.12395",
+      "https://dblp.org/rec/journals/corr/abs-2411-12395.html",
+      "https://www.semanticscholar.org/paper/aeb02184c3512aa972e7dd6f76599a833da03dfb"
+    ]
+  }
+  </script>
+
+  <!-- JSON-LD: FAQ (AI answer-engine optimization) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Do LLMs understand ambiguity in text?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Not reliably. Off-the-shelf LLMs such as GPT-4o and GPT-4o-mini struggle with ambiguous open-domain questions, frequently choosing one interpretation and answering it confidently even when the wording supports several valid answers. However, they can better resolve ambiguity when a question is disambiguated, especially in cases where human annotators also find the question resolvable." }
+      },
+      {
+        "@type": "Question",
+        "name": "How can you improve LLM accuracy on ambiguous questions?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Simple, training-free, token-level disambiguation prompts help. We test two: (1) rephrasing the question to begin with 'what' to make it more specific, and (2) adding context using the model's own world knowledge before answering. Both improve ground-truth answer overlap over naive prompting for GPT-4o and GPT-4o-mini, with adding context performing best." }
+      },
+      {
+        "@type": "Question",
+        "name": "Does fine-tuning help LLMs answer ambiguous questions?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Not at the small scale we tested. Few-shot fine-tuning of GPT-4o-mini on 50 ambiguous question-answer pairs did not improve, and slightly decreased, ground-truth answer overlap (0.626 vs 0.643 naive), likely due to catastrophic forgetting. Training-free prompting was more effective." }
+      },
+      {
+        "@type": "Question",
+        "name": "Does lowering the temperature help LLMs on ambiguous questions?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No meaningful benefit. Lowering temperature from 1.0 to 0.2 produced only minor, non-significant changes in accuracy on ambiguous questions." }
+      },
+      {
+        "@type": "Question",
+        "name": "What dataset and models were used?",
+        "acceptedAnswer": { "@type": "Answer", "text": "We use AmbigQA, a subset of Google's NQ-Open, sampling 1,000 ambiguous questions from the train split. Models evaluated are OpenAI GPT-4o and GPT-4o-mini, with answers scored by cosine similarity of text-embedding-3-large embeddings against ground-truth answers." }
+      }
+    ]
+  }
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" type="image/webp" href="./static/images/favicon.webp">
+  <link rel="apple-touch-icon" href="./static/images/favicon.webp">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-2 publication-title">Do LLMs <i>Understand</i> Ambiguity in Text?</h1>
+          <h2 class="subtitle is-4" style="margin-top:-0.5rem;margin-bottom:1.25rem;">A Case Study in Open-world Question Answering</h2>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://github.com/aryankeluskar">Aryan Keluskar</a>,</span>
+            <span class="author-block">
+              <a href="https://www.public.asu.edu/~abhatt43/">Amrita Bhattacharjee</a>,</span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=Kf5f-hgAAAAJ">Huan Liu</a></span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">School of Computing &amp; AI, Arizona State University</span>
+          </div>
+
+          <div class="is-size-6 publication-authors" style="margin-top:0.4rem;">
+            <span class="author-block"><i>IEEE International Conference on Big Data (IEEE BigData) 2024</i></span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="https://arxiv.org/pdf/2411.12395"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2411.12395"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="ai ai-arxiv"></i></span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://github.com/aryankeluskar/Ambig-LLM-Analysis"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                  <span>Code</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://www.semanticscholar.org/paper/aeb02184c3512aa972e7dd6f76599a833da03dfb"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="ai ai-semantic-scholar"></i></span>
+                  <span>Semantic Scholar</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <img src="./static/images/problem.png"
+           alt="The problem of ambiguity in open-domain question answering, and how we disambiguate it for LLM question answering."
+           width="100%">
+      <h2 class="subtitle has-text-centered" style="margin-top:0.75rem;">
+        The problem of <span class="dnerf">ambiguity</span> in open-domain question answering (left),
+        and how we resolve it for large-language-model QA with simple, training-free prompts (right).
+      </h2>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Ambiguity in natural language poses significant challenges to Large Language Models (LLMs)
+            used for open-domain question answering. LLMs often struggle with the inherent
+            uncertainties of human communication, leading to misinterpretations, miscommunications,
+            hallucinations, and biased responses. This significantly weakens their ability to be used
+            for tasks like fact-checking, question answering, feature extraction, and sentiment
+            analysis. Using open-domain question answering as a test case, we compare off-the-shelf
+            and few-shot LLM performance, focusing on measuring the impact of explicit disambiguation
+            strategies.
+          </p>
+          <p>
+            We demonstrate how simple, training-free, token-level disambiguation methods may be
+            effectively used to improve LLM performance for ambiguous question answering tasks. We
+            empirically show our findings and discuss best practices and broader impacts regarding
+            ambiguity in LLMs.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract -->
+
+    <!-- Key Takeaways (TL;DR) -->
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3 has-text-centered">Key Takeaways</h2>
+        <div class="content has-text-justified">
+          <ul>
+            <li><b>LLMs are sensitive to ambiguity.</b> Off-the-shelf GPT-4o and GPT-4o-mini often
+              lock onto one interpretation of an ambiguous question and answer it confidently, even
+              when several answers are valid.</li>
+            <li><b>Training-free disambiguation prompts help.</b> Two simple, token-level strategies
+              &mdash; rephrasing with <i>"what"</i> and adding model-generated context &mdash; improve
+              ground-truth answer overlap over naive prompting for both models.</li>
+            <li><b>Adding context works best</b> among the prompt-based methods, but can hurt when the
+              model injects irrelevant context.</li>
+            <li><b>Small-scale fine-tuning did not help</b> (0.626 vs. 0.643 naive on GPT-4o-mini),
+              likely due to catastrophic forgetting.</li>
+            <li><b>Lower temperature is not a fix</b> &mdash; dropping from 1.0 to 0.2 gives only minor,
+              non-significant changes.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!--/ Key Takeaways -->
+  </div>
+</section>
+
+<section class="section" style="padding-top:0;">
+  <div class="container is-max-desktop">
+    <!-- Approach -->
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3 has-text-centered">Approach: Training-free Disambiguation</h2>
+        <div class="content has-text-justified">
+          <p>
+            We define the task over a dataset of triples <i>(q<sub>i</sub>, q<sup>d</sup><sub>i</sub>, &acirc;<sub>i</sub>)</i>,
+            where <i>q<sub>i</sub></i> is the ambiguous question, <i>q<sup>d</sup><sub>i</sub></i> its human-disambiguated
+            rewrite, and <i>&acirc;<sub>i</sub></i> the ground-truth answer. For an LLM <i>M</i>, we compare
+            <i>M(q<sub>i</sub>)</i> against <i>M(q<sup>d</sup><sub>i</sub>)</i>, and against two training-free prompts
+            that try to close the gap without access to the human rewrite.
+          </p>
+          <h3 class="title is-5">1. Naive (baseline)</h3>
+          <pre style="white-space:pre-wrap;"><code>Answer the question as concisely as possible with ONLY one answer
+without any other text:
+Question: {x}</code></pre>
+          <h3 class="title is-5">2. Rephrase using "What"</h3>
+          <p>Rephrasing a question to begin with <i>"what"</i> makes it more specific and reduces
+             response variability (rephrased questions were ~1.45&times; longer on average).</p>
+          <pre style="white-space:pre-wrap;"><code>Rewrite this question replacing all questions with a what, but retain
+the meaning by specifying what entity or what person or what timeframe
+the "what" is answering. Also, specify the current year is 2018 if
+needed to answer a time-based question.
+Question: {x}</code></pre>
+          <h3 class="title is-5">3. Adding Context</h3>
+          <p>We use the model's own world knowledge to generate context that reduces
+             <i>scope ambiguity</i>, then append the original question (context-enriched questions
+             were ~14.2&times; longer on average).</p>
+          <pre style="white-space:pre-wrap;"><code>Add extra information to the following question. Also specify the
+current month and year is January 2018, so answer questions accordingly.
+Your aim is to disambiguate what it is asking.
+Question: {x}</code></pre>
+        </div>
+        <div class="content has-text-centered">
+          <img src="./static/images/scope_ambiguity.png"
+               alt="Overview of scope ambiguity and how adding context resolves it."
+               width="80%">
+          <p class="is-size-6">Scope ambiguity: two questions with identical structure but different
+             meaning are separated by adding entity context.</p>
+        </div>
+      </div>
+    </div>
+    <!--/ Approach -->
+  </div>
+</section>
+
+<section class="section" style="padding-top:0;">
+  <div class="container is-max-desktop">
+    <!-- Results -->
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3 has-text-centered">Results</h2>
+        <div class="content has-text-justified">
+          <p>
+            We evaluate on 1,000 randomly sampled ambiguous questions from <b>AmbigQA</b> (a subset of
+            Google's <b>NQ-Open</b>), scoring answers by cosine similarity of
+            <i>text-embedding-3-large</i> embeddings against ground truth. Higher <b>GT Answer Overlap</b>
+            is better. For both GPT-4o and GPT-4o-mini, training-free disambiguation beats the naive
+            baseline, with <b>adding context</b> best.
+          </p>
+        </div>
+
+        <h3 class="title is-5 has-text-centered">GPT-4o</h3>
+        <div class="table-container">
+          <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth has-text-centered">
+            <thead>
+              <tr><th>Metric</th><th>Naive</th><th>Disamb. via 'what'</th><th>Disamb. via context</th><th>Upper-bound (GT disamb.)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Question coherence</td><td>&ndash;</td><td>0.905</td><td>0.743</td><td>0.317</td></tr>
+              <tr><td>Naive Answer Overlap</td><td>&ndash;</td><td>0.826</td><td>0.799</td><td>0.895</td></tr>
+              <tr><td>GT Answer Overlap &uarr;</td><td>0.759</td><td>0.778</td><td><b>0.789</b></td><td>0.858</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="title is-5 has-text-centered">GPT-4o-mini</h3>
+        <div class="table-container">
+          <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth has-text-centered">
+            <thead>
+              <tr><th>Metric</th><th>Naive</th><th>Disamb. via 'what'</th><th>Disamb. via context</th><th>Upper-bound (GT disamb.)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Question coherence</td><td>&ndash;</td><td>0.907</td><td>0.739</td><td>0.317</td></tr>
+              <tr><td>Naive Answer Overlap</td><td>&ndash;</td><td>0.771</td><td>0.739</td><td>0.745</td></tr>
+              <tr><td>GT Answer Overlap &uarr;</td><td>0.692</td><td>0.707</td><td><b>0.71</b></td><td>0.783</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="columns is-centered" style="margin-top:1rem;">
+          <div class="column has-text-centered">
+            <img src="./static/images/whole_context.png"
+                 alt="KDE of cosine similarity between ground truth and LLM response, full sample."
+                 width="100%">
+            <p class="is-size-6">Full sample: cosine similarity of LLM response vs. ground truth for the
+               two disambiguation strategies.</p>
+          </div>
+          <div class="column has-text-centered">
+            <img src="./static/images/subset_context.png"
+                 alt="KDE of cosine similarity on the human-resolvable subset of AmbigQA."
+                 width="100%">
+            <p class="is-size-6">Human-resolvable subset: adding context skews right &mdash; LLMs
+               disambiguate well exactly where humans can too.</p>
+          </div>
+        </div>
+
+        <div class="content has-text-centered">
+          <img src="./static/images/temp-comparison.png"
+               alt="GT Answer Overlap for GPT-4o and GPT-4o-mini at high (1.0) and low (0.2) temperature."
+               width="70%">
+          <p class="is-size-6">Temperature ablation: lowering temperature from 1.0 to 0.2 yields only
+             minor, non-significant differences.</p>
+        </div>
+      </div>
+    </div>
+    <!--/ Results -->
+  </div>
+</section>
+
+<section class="section" style="padding-top:0;">
+  <div class="container is-max-desktop">
+    <!-- FAQ -->
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3 has-text-centered">Frequently Asked Questions</h2>
+        <div class="content has-text-justified">
+          <h3 class="title is-5">Do LLMs understand ambiguity in text?</h3>
+          <p>Not reliably. GPT-4o and GPT-4o-mini often commit to a single interpretation of an
+             ambiguous question and answer confidently, even when the wording admits several valid
+             answers. They resolve ambiguity better when the question is disambiguated &mdash; especially
+             in cases humans also find resolvable.</p>
+
+          <h3 class="title is-5">How can you improve LLM accuracy on ambiguous questions?</h3>
+          <p>Use simple, training-free, token-level disambiguation prompts: rephrase the question to
+             start with <i>"what"</i>, or add context from the model's own world knowledge before
+             answering. Both raise ground-truth answer overlap over naive prompting, with adding
+             context best.</p>
+
+          <h3 class="title is-5">Does fine-tuning help?</h3>
+          <p>Not at the scale tested. Few-shot fine-tuning of GPT-4o-mini on 50 QA pairs slightly
+             reduced accuracy (0.626 vs. 0.643 naive), likely from catastrophic forgetting.</p>
+
+          <h3 class="title is-5">Does lowering temperature help?</h3>
+          <p>No meaningful benefit &mdash; dropping temperature from 1.0 to 0.2 gives only minor,
+             non-significant changes.</p>
+
+          <h3 class="title is-5">What data and models were used?</h3>
+          <p>1,000 ambiguous questions sampled from <b>AmbigQA</b> (a subset of Google's NQ-Open),
+             evaluated on OpenAI <b>GPT-4o</b> and <b>GPT-4o-mini</b>, scored by cosine similarity of
+             <i>text-embedding-3-large</i> embeddings.</p>
+        </div>
+      </div>
+    </div>
+    <!--/ FAQ -->
+  </div>
+</section>
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@inproceedings{keluskar2024llms,
+  title={Do llms understand ambiguity in text? a case study in open-world question answering},
+  author={Keluskar, Aryan and Bhattacharjee, Amrita and Liu, Huan},
+  booktitle={2024 IEEE International Conference on Big Data (BigData)},
+  pages={7485--7490},
+  year={2024},
+  organization={IEEE}
+}</code></pre>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link" href="https://arxiv.org/pdf/2411.12395">
+        <i class="fas fa-file-pdf"></i>
+      </a>
+      <a class="icon-link" href="https://github.com/aryankeluskar/Ambig-LLM-Analysis" class="external-link">
+        <i class="fab fa-github"></i>
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website presents the paper <i>"Do LLMs Understand Ambiguity in Text? A Case Study in
+            Open-world Question Answering"</i> (arXiv:2411.12395). The website template is borrowed from
+            <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a> and is licensed under a
+            <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons
+            Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
