@@ -142,9 +142,9 @@
             <span class="author-block">
               <a href="https://github.com/aryankeluskar">Aryan Keluskar</a>,</span>
             <span class="author-block">
-              <a href="https://www.public.asu.edu/~abhatt43/">Amrita Bhattacharjee</a>,</span>
+              <a href="https://amritabh.github.io/">Amrita Bhattacharjee</a>,</span>
             <span class="author-block">
-              <a href="https://scholar.google.com/citations?user=Kf5f-hgAAAAJ">Huan Liu</a></span>
+              <a href="https://faculty.engineering.asu.edu/huanliu/">Huan Liu</a></span>
           </div>
 
           <div class="is-size-5 publication-authors">
@@ -172,17 +172,10 @@
                 </a>
               </span>
               <span class="link-block">
-                <a href="https://github.com/aryankeluskar/Ambig-LLM-Analysis"
+                <a href="https://ieeexplore.ieee.org/abstract/document/10825265"
                    class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon"><i class="fab fa-github"></i></span>
-                  <span>Code</span>
-                </a>
-              </span>
-              <span class="link-block">
-                <a href="https://www.semanticscholar.org/paper/aeb02184c3512aa972e7dd6f76599a833da03dfb"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon"><i class="ai ai-semantic-scholar"></i></span>
-                  <span>Semantic Scholar</span>
+                  <span class="icon"><i class="ai ai-ieee"></i></span>
+                  <span>IEEE Xplore</span>
                 </a>
               </span>
             </div>
@@ -200,8 +193,8 @@
            alt="The problem of ambiguity in open-domain question answering, and how we disambiguate it for LLM question answering."
            width="100%">
       <h2 class="subtitle has-text-centered" style="margin-top:0.75rem;">
-        The problem of <span class="dnerf">ambiguity</span> in open-domain question answering (left),
-        and how we resolve it for large-language-model QA with simple, training-free prompts (right).
+        The problem of ambiguity in open-domain question answering (left),
+        and how we resolve it for LLM QA using two training-free prompts (right).
       </h2>
     </div>
   </div>
@@ -241,18 +234,18 @@
         <h2 class="title is-3 has-text-centered">Key Takeaways</h2>
         <div class="content has-text-justified">
           <ul>
-            <li><b>LLMs are sensitive to ambiguity.</b> Off-the-shelf GPT-4o and GPT-4o-mini often
-              lock onto one interpretation of an ambiguous question and answer it confidently, even
-              when several answers are valid.</li>
-            <li><b>Training-free disambiguation prompts help.</b> Two simple, token-level strategies
-              &mdash; rephrasing with <i>"what"</i> and adding model-generated context &mdash; improve
+            <li><b>LLMs are sensitive to ambiguity.</b> Off-the-shelf GPT-4o and GPT-4o-mini tend to
+              pick one reading of an ambiguous question and answer it confidently, even when several
+              answers are valid.</li>
+            <li><b>Training-free disambiguation prompts help.</b> Two token-level strategies,
+              rephrasing with <i>"what"</i> and adding model-generated context, improve
               ground-truth answer overlap over naive prompting for both models.</li>
-            <li><b>Adding context works best</b> among the prompt-based methods, but can hurt when the
-              model injects irrelevant context.</li>
-            <li><b>Small-scale fine-tuning did not help</b> (0.626 vs. 0.643 naive on GPT-4o-mini),
-              likely due to catastrophic forgetting.</li>
-            <li><b>Lower temperature is not a fix</b> &mdash; dropping from 1.0 to 0.2 gives only minor,
-              non-significant changes.</li>
+            <li><b>Adding context works best</b> of the prompt-based methods, but it backfires when the
+              model tacks on irrelevant context.</li>
+            <li><b>Small-scale fine-tuning did not help.</b> On GPT-4o-mini it slightly hurt
+              (0.626 vs. 0.643 naive), probably from catastrophic forgetting.</li>
+            <li><b>Lower temperature is not a fix.</b> Dropping from 1.0 to 0.2 changes almost
+              nothing.</li>
           </ul>
         </div>
       </div>
@@ -266,7 +259,7 @@
     <!-- Approach -->
     <div class="columns is-centered">
       <div class="column is-full-width">
-        <h2 class="title is-3 has-text-centered">Approach: Training-free Disambiguation</h2>
+        <h2 class="title is-3 has-text-centered">Approach: training-free disambiguation</h2>
         <div class="content has-text-justified">
           <p>
             We define the task over a dataset of triples <i>(q<sub>i</sub>, q<sup>d</sup><sub>i</sub>, &acirc;<sub>i</sub>)</i>,
@@ -287,10 +280,10 @@ the meaning by specifying what entity or what person or what timeframe
 the "what" is answering. Also, specify the current year is 2018 if
 needed to answer a time-based question.
 Question: {x}</code></pre>
-          <h3 class="title is-5">3. Adding Context</h3>
-          <p>We use the model's own world knowledge to generate context that reduces
-             <i>scope ambiguity</i>, then append the original question (context-enriched questions
-             were ~14.2&times; longer on average).</p>
+          <h3 class="title is-5">3. Adding context</h3>
+          <p>We ask the model to generate context from its own world knowledge to reduce
+             <i>scope ambiguity</i>, then append the original question. The context-enriched
+             questions ran about 14.2&times; longer than the originals.</p>
           <pre style="white-space:pre-wrap;"><code>Add extra information to the following question. Also specify the
 current month and year is January 2018, so answer questions accordingly.
 Your aim is to disambiguate what it is asking.
@@ -365,8 +358,8 @@ Question: {x}</code></pre>
             <img src="./static/images/subset_context.png"
                  alt="KDE of cosine similarity on the human-resolvable subset of AmbigQA."
                  width="100%">
-            <p class="is-size-6">Human-resolvable subset: adding context skews right &mdash; LLMs
-               disambiguate well exactly where humans can too.</p>
+            <p class="is-size-6">Human-resolvable subset: here adding context skews right. LLMs
+               disambiguate well in the cases humans can too.</p>
           </div>
         </div>
 
@@ -391,23 +384,23 @@ Question: {x}</code></pre>
         <h2 class="title is-3 has-text-centered">Frequently Asked Questions</h2>
         <div class="content has-text-justified">
           <h3 class="title is-5">Do LLMs understand ambiguity in text?</h3>
-          <p>Not reliably. GPT-4o and GPT-4o-mini often commit to a single interpretation of an
+          <p>Not reliably. GPT-4o and GPT-4o-mini often settle on a single reading of an
              ambiguous question and answer confidently, even when the wording admits several valid
-             answers. They resolve ambiguity better when the question is disambiguated &mdash; especially
-             in cases humans also find resolvable.</p>
+             answers. They do better once the question is disambiguated, especially in the cases
+             humans also find resolvable.</p>
 
           <h3 class="title is-5">How can you improve LLM accuracy on ambiguous questions?</h3>
-          <p>Use simple, training-free, token-level disambiguation prompts: rephrase the question to
-             start with <i>"what"</i>, or add context from the model's own world knowledge before
-             answering. Both raise ground-truth answer overlap over naive prompting, with adding
-             context best.</p>
+          <p>Use a training-free disambiguation prompt. Either rephrase the question to
+             start with <i>"what"</i>, or have the model add context from its own world knowledge
+             before answering. Both raise ground-truth answer overlap over naive prompting, and
+             adding context works best.</p>
 
           <h3 class="title is-5">Does fine-tuning help?</h3>
           <p>Not at the scale tested. Few-shot fine-tuning of GPT-4o-mini on 50 QA pairs slightly
              reduced accuracy (0.626 vs. 0.643 naive), likely from catastrophic forgetting.</p>
 
           <h3 class="title is-5">Does lowering temperature help?</h3>
-          <p>No meaningful benefit &mdash; dropping temperature from 1.0 to 0.2 gives only minor,
+          <p>No meaningful benefit. Dropping temperature from 1.0 to 0.2 gives only minor,
              non-significant changes.</p>
 
           <h3 class="title is-5">What data and models were used?</h3>
