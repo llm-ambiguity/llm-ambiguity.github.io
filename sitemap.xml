@@ -3,12 +3,15 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://llm-ambiguity.github.io/</loc>
-    <lastmod>2024-11-19</lastmod>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
     <image:image>
       <image:loc>https://llm-ambiguity.github.io/static/images/problem.png</image:loc>
       <image:title>Ambiguity in open-domain question answering and how we disambiguate it for LLM QA</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://llm-ambiguity.github.io/static/images/og.jpg</image:loc>
     </image:image>
   </url>
 </urlset>
