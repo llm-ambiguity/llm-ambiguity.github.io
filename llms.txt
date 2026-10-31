@@ -1,0 +1,49 @@
+# Do LLMs Understand Ambiguity in Text?
+
+> A study of 1,000 ambiguous open-domain questions (AmbigQA, from Google's NQ-Open) with GPT-4o and GPT-4o-mini. Off-the-shelf LLMs pick one reading of an ambiguous question and answer it confidently; simple, training-free, token-level disambiguation prompts — rephrasing with "what", or adding model-generated context — measurably improve ground-truth answer overlap, with adding context best. Published at IEEE BigData 2024 (DOI 10.1109/BigData62323.2024.10825265).
+
+Paper: "Do LLMs Understand Ambiguity in Text? A Case Study in Open-world Question Answering" by Aryan Keluskar, Amrita Bhattacharjee, and Huan Liu (School of Computing & AI, Arizona State University). Published at the 2024 IEEE International Conference on Big Data (IEEE BigData), pages 7485–7490.
+
+## Key facts
+
+- Task: open-domain QA over 1,000 ambiguous questions sampled from AmbigQA (a subset of Google's NQ-Open); answers scored by cosine similarity of OpenAI text-embedding-3-large embeddings against ground truth ("GT answer overlap", higher is better).
+- Models: GPT-4o and GPT-4o-mini.
+- Baselines: naive prompting; few-shot fine-tuning (50 ambiguous QA pairs); temperature ablation.
+- Rephrasing a question to begin with "what" makes it more specific and raises GT answer overlap (GPT-4o 0.759 → 0.778).
+- Adding context generated from the model's own world knowledge works best (GPT-4o 0.759 → 0.789; GPT-4o-mini 0.692 → 0.71), and tracks the human-disambiguated upper bound (0.858 / 0.783).
+- Small-scale fine-tuning did not help: GPT-4o-mini slightly degraded (0.626 vs. 0.643 naive), likely from catastrophic forgetting.
+- Lowering temperature from 1.0 to 0.2 produced only minor, non-significant changes.
+- Ambiguity matters for fact-checking, question answering, feature extraction, and sentiment analysis: models misinterpret ambiguous input, hallucinate, and answer the wrong question confidently.
+
+## Links
+
+- [Project page](https://llm-ambiguity.github.io/): abstract, approach, prompt templates, results tables, FAQ.
+- [arXiv:2411.12395](https://arxiv.org/abs/2411.12395)
+- [IEEE Xplore (DOI 10.1109/BigData62323.2024.10825265)](https://ieeexplore.ieee.org/abstract/document/10825265)
+- [Code (GitHub)](https://github.com/aryankeluskar/Ambig-LLM-Analysis)
+- [Press kit](https://llm-ambiguity.github.io/press.md): plain-English summary for journalists; this paper was previously covered by [AI Techbrief at AZo](https://www.azoai.com/) and [Convert.com](https://www.convert.com/).
+
+## Cite
+
+```bibtex
+@inproceedings{keluskar2024llms,
+  title={Do llms understand ambiguity in text? a case study in open-world question answering},
+  author={Keluskar, Aryan and Bhattacharjee, Amrita and Liu, Huan},
+  booktitle={2024 IEEE International Conference on Big Data (BigData)},
+  pages={7485--7490},
+  year={2024},
+  organization={IEEE},
+  doi={10.1109/BigData62323.2024.10825265}
+}
+```
+
+## Authors
+
+- [Aryan Keluskar](https://aryankeluskar.com) — Arizona State University ([Scholar](https://scholar.google.com/citations?user=wVDeZtcAAAAJ), [ORCID 0009-0000-4587-7955](https://orcid.org/0009-0000-4587-7955), [OpenReview](https://openreview.net/profile?id=~Aryan_Keluskar1), [X @soydotrun](https://x.com/soydotrun))
+- [Amrita Bhattacharjee](https://amritabh.github.io/) — Arizona State University ([GitHub](https://github.com/amritabh))
+- [Huan Liu](https://faculty.engineering.asu.edu/huanliu/) — Arizona State University ([Scholar](https://scholar.google.com/citations?user=Dzf46C8AAAAJ), [DBLP](https://dblp.org/pid/92/309-1.html))
+
+## Related work by this group
+
+- [ToolAlignBench: Investigating Alignment Conflicts in Tool-Calling Enabled LLMs](https://toolalignbench.github.io/) (ICML 2026 workshop)
+- [When Does Personality Composition Matter for Multi-Agent LLM Teams?](https://multi-agent-llm-teams.github.io/) (COLM 2026)
