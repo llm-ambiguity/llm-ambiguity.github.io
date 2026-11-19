@@ -5,6 +5,9 @@
 
 User-agent: *
 Allow: /
+# Content Signals (draft-romm-aipref-contentsignals): this project is
+# deliberately fully open — AI training, search, and AI input are all welcome.
+Content-Signal: ai-train=yes, search=yes, ai-input=yes
 
 # --- Search + answer engines (AI visibility) ---
 User-agent: Googlebot
@@ -74,5 +77,9 @@ User-agent: cohere-ai
 Allow: /
 User-agent: KimiBot
 Allow: /
+
+# Agentic Resource Discovery (ARD): machine-readable capability manifest
+# for AI agents, per https://agenticresourcediscovery.org/
+Agentmap: https://llm-ambiguity.github.io/.well-known/ai-catalog.json
 
 Sitemap: https://llm-ambiguity.github.io/sitemap.xml

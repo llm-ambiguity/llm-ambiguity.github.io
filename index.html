@@ -14,6 +14,9 @@
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
   <link rel="canonical" href="https://llm-ambiguity.github.io/">
 
+  <!-- Agentic Resource Discovery (ARD): machine-readable capability manifest -->
+  <link rel="ai-catalog" href="https://llm-ambiguity.github.io/.well-known/ai-catalog.json">
+
   <!-- Highwire / Google Scholar citation meta tags -->
   <meta name="citation_title" content="Do LLMs Understand Ambiguity in Text? A Case Study in Open-world Question Answering">
   <meta name="citation_author" content="Keluskar, Aryan">
@@ -578,6 +581,172 @@ Question: {x}</code></pre>
     </div>
   </div>
 </footer>
+
+<!-- WebMCP (webmachinelearning/webmcp): expose this page's key actions to
+     browser-integrated AI agents via document.modelContext. Feature-detected;
+     no-ops cleanly on browsers without the API. -->
+<script>
+(function () {
+  'use strict';
+
+  var METADATA = {
+    title: 'Do LLMs Understand Ambiguity in Text? A Case Study in Open-world Question Answering',
+    authors: ['Aryan Keluskar', 'Amrita Bhattacharjee', 'Huan Liu'],
+    affiliation: 'School of Computing & AI, Arizona State University',
+    venue: '2024 IEEE International Conference on Big Data (IEEE BigData)',
+    pages: '7485-7490',
+    year: 2024,
+    doi: '10.1109/BigData62323.2024.10825265',
+    arxiv: '2411.12395',
+    links: {
+      pdf: 'https://arxiv.org/pdf/2411.12395',
+      arxiv: 'https://arxiv.org/abs/2411.12395',
+      ieee: 'https://ieeexplore.ieee.org/abstract/document/10825265',
+      code: 'https://github.com/aryankeluskar/Ambig-LLM-Analysis',
+      project: 'https://llm-ambiguity.github.io/'
+    }
+  };
+
+  var BIBTEX = '@inproceedings{keluskar2024llms,\n' +
+    '  title={Do llms understand ambiguity in text? a case study in open-world question answering},\n' +
+    '  author={Keluskar, Aryan and Bhattacharjee, Amrita and Liu, Huan},\n' +
+    '  booktitle={2024 IEEE International Conference on Big Data (BigData)},\n' +
+    '  pages={7485--7490},\n' +
+    '  year={2024},\n' +
+    '  organization={IEEE},\n' +
+    '  doi={10.1109/BigData62323.2024.10825265}\n' +
+    '}';
+
+  var PROMPTS = {
+    what: 'Rewrite this question replacing all questions with a what, but retain\n' +
+      'the meaning by specifying what entity or what person or what timeframe\n' +
+      'the "what" is answering. Also, specify the current year is 2018 if\n' +
+      'needed to answer a time-based question.\nQuestion: {x}',
+    context: 'Add extra information to the following question. Also specify the\n' +
+      'current month and year is January 2018, so answer questions accordingly.\n' +
+      'Your aim is to disambiguate what it is asking.\nQuestion: {x}'
+  };
+
+  var FAQ = [
+    ['Do LLMs understand ambiguity in text?',
+      'Not reliably. GPT-4o and GPT-4o-mini often settle on a single reading of an ambiguous question and answer confidently, even when the wording admits several valid answers. They do better once a question is disambiguated, especially in the cases humans also find resolvable.'],
+    ['How can you improve LLM accuracy on ambiguous questions?',
+      'Use a training-free disambiguation prompt. Either rephrase the question to start with "what", or have the model add context from its own world knowledge before answering. Both raise ground-truth answer overlap over naive prompting, and adding context works best.'],
+    ['Does fine-tuning help?',
+      'Not at the scale tested. Few-shot fine-tuning of GPT-4o-mini on 50 QA pairs slightly reduced accuracy (0.626 vs 0.643 naive), likely due to catastrophic forgetting.'],
+    ['Does lowering temperature help?',
+      'No meaningful benefit. Dropping temperature from 1.0 to 0.2 gives only minor, non-significant changes.'],
+    ['What data and models were used?',
+      '1,000 ambiguous questions sampled from AmbigQA (a subset of Google\'s NQ-Open), evaluated on OpenAI GPT-4o and GPT-4o-mini, scored by cosine similarity of text-embedding-3-large embeddings.']
+  ];
+
+  function text(payload) {
+    return { content: [{ type: 'text', text: JSON.stringify(payload, null, 2) }] };
+  }
+
+  var TOOLS = [
+    {
+      name: 'get-paper-metadata',
+      description: 'Returns structured metadata (title, authors, venue, DOI, arXiv id, links) for the IEEE BigData 2024 paper "Do LLMs Understand Ambiguity in Text?".',
+      inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+      annotations: { readOnlyHint: true },
+      execute: function () { return Promise.resolve(text(METADATA)); }
+    },
+    {
+      name: 'get-bibtex-citation',
+      description: 'Returns the correct BibTeX entry for citing this paper (IEEE BigData 2024, DOI 10.1109/BigData62323.2024.10825265).',
+      inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+      annotations: { readOnlyHint: true },
+      execute: function () { return Promise.resolve(text({ format: 'bibtex', citation: BIBTEX })); }
+    },
+    {
+      name: 'get-disambiguation-prompts',
+      description: 'Returns the paper\'s training-free prompts for disambiguating an ambiguous question before answering it: "what" (rephrase to start with what) or "context" (add world-knowledge context).',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          strategy: {
+            type: 'string',
+            enum: ['what', 'context', 'both'],
+            description: 'Which prompt to return: rephrase-with-what, add-context, or both.'
+          }
+        },
+        additionalProperties: false
+      },
+      annotations: { readOnlyHint: true },
+      execute: function (args) {
+        var s = (args && args.strategy) || 'both';
+        var out = {};
+        if (s === 'what' || s === 'both') out.what = PROMPTS.what;
+        if (s === 'context' || s === 'both') out.context = PROMPTS.context;
+        return Promise.resolve(text(out));
+      }
+    },
+    {
+      name: 'search-paper-faq',
+      description: 'Searches this paper\'s FAQ and returns the best-matching grounded question-answer pairs (findings on ambiguity, disambiguation prompts, fine-tuning, temperature, dataset).',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          query: { type: 'string', description: 'A natural-language question about this paper.' }
+        },
+        required: ['query'],
+        additionalProperties: false
+      },
+      annotations: { readOnlyHint: true },
+      execute: function (args) {
+        var q = ((args && args.query) || '').toLowerCase();
+        var tokens = q.split(/[^a-z0-9]+/).filter(function (t) { return t.length > 2; });
+        var scored = FAQ.map(function (pair) {
+          var hay = (pair[0] + ' ' + pair[1]).toLowerCase();
+          var score = 0;
+          for (var i = 0; i < tokens.length; i++) {
+            if (hay.indexOf(tokens[i]) !== -1) score++;
+          }
+          return { question: pair[0], answer: pair[1], score: score };
+        }).sort(function (a, b) { return b.score - a.score; });
+        var hits = scored.filter(function (m) { return m.score > 0; }).slice(0, 3);
+        if (hits.length === 0) hits = scored.slice(0, 1);
+        return Promise.resolve(text({ matches: hits }));
+      }
+    }
+  ];
+
+  function registerAll(signal) {
+    var registrations = [];
+    var i, t;
+    // The WebMCP spec exposes the API on document.modelContext; older
+    // experimental builds expose it on navigator.modelContext.
+    if (document.modelContext && typeof document.modelContext.registerTool === 'function') {
+      for (i = 0; i < TOOLS.length; i++) {
+        registrations.push(document.modelContext.registerTool(TOOLS[i], { signal: signal }));
+      }
+    } else if (navigator.modelContext && typeof navigator.modelContext.registerTool === 'function') {
+      for (t = 0; t < TOOLS.length; t++) {
+        registrations.push(navigator.modelContext.registerTool(TOOLS[t], { signal: signal }));
+      }
+    }
+    return registrations;
+  }
+
+  try {
+    var controller = new AbortController();
+    var registrations = registerAll(controller.signal);
+    window.__webmcpTools = {
+      names: TOOLS.map(function (tool) { return tool.name; }),
+      registrations: registrations,
+      controller: controller
+    };
+    for (var k = 0; k < registrations.length; k++) {
+      Promise.resolve(registrations[k]).catch(function (err) {
+        console.warn('WebMCP tool registration failed', err);
+      });
+    }
+  } catch (err) {
+    console.warn('WebMCP registration skipped', err);
+  }
+})();
+</script>
 
 </body>
 </html>

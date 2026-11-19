@@ -1,0 +1,26 @@
+{
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+  "skills": [
+    {
+      "name": "disambiguate-questions",
+      "type": "skill-md",
+      "description": "Resolve ambiguous questions with two training-free, token-level prompts from the IEEE BigData 2024 paper on LLM ambiguity (arXiv:2411.12395). Use when a question could admit several valid readings.",
+      "url": "/.well-known/agent-skills/disambiguate-questions/SKILL.md",
+      "digest": "sha256:6de8d3d4d9ef7679207e7ed8041aa3de0c99139b7f6b964864b69b44c79431ed"
+    },
+    {
+      "name": "cite-this-paper",
+      "type": "skill-md",
+      "description": "Cite the IEEE BigData 2024 paper \"Do LLMs Understand Ambiguity in Text?\" correctly — BibTeX, DOI, arXiv, and canonical links. Use when citing, referencing, or linking this work.",
+      "url": "/.well-known/agent-skills/cite-this-paper/SKILL.md",
+      "digest": "sha256:470f873ec1b9d5a350b44264c4304d1bc01d10b95b666a816c33f945ea5dc85b"
+    },
+    {
+      "name": "paper-facts",
+      "type": "skill-md",
+      "description": "Grounded key findings from \"Do LLMs Understand Ambiguity in Text?\" (IEEE BigData 2024) — dataset, models, numbers, and FAQ answers. Use when answering questions about this paper.",
+      "url": "/.well-known/agent-skills/paper-facts/SKILL.md",
+      "digest": "sha256:13e3de1d800c5518fa1c270b7fb5a7d14eb1f2ec6bdd2b574b3b365a90916f10"
+    }
+  ]
+}
