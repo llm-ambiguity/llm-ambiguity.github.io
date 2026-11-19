@@ -18,6 +18,7 @@ Paper: "Do LLMs Understand Ambiguity in Text? A Case Study in Open-world Questio
 ## Links
 
 - [Project page](https://llm-ambiguity.github.io/): abstract, approach, prompt templates, results tables, FAQ.
+- [Frequently asked questions](https://llm-ambiguity.github.io/#faq): do LLMs understand ambiguity, how to improve accuracy on ambiguous questions, how much disambiguation improves GPT-4o, why LLMs hallucinate on ambiguous questions, which ambiguities cause the most trouble, what AmbigQA is, whether fine-tuning or temperature help, and what data and models were used.
 - [arXiv:2411.12395](https://arxiv.org/abs/2411.12395)
 - [IEEE Xplore (DOI 10.1109/BigData62323.2024.10825265)](https://ieeexplore.ieee.org/abstract/document/10825265)
 - [Code (GitHub)](https://github.com/aryankeluskar/Ambig-LLM-Analysis)
