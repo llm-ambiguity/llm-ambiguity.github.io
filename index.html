@@ -158,17 +158,37 @@
       },
       {
         "@type": "Question",
-        "name": "Does fine-tuning help LLMs answer ambiguous questions?",
+        "name": "How much does disambiguation actually improve GPT-4o?",
+        "acceptedAnswer": { "@type": "Answer", "text": "On 1,000 ambiguous questions from AmbigQA, GPT-4o's ground-truth answer overlap goes from 0.759 (naive) to 0.778 when the question is rewritten to start with 'what', and to 0.789 when context is added — against a human-disambiguated upper bound of 0.858. GPT-4o-mini improves from 0.692 to 0.707 ('what') and 0.71 (context), against an upper bound of 0.783." }
+      },
+      {
+        "@type": "Question",
+        "name": "Why do LLMs hallucinate on ambiguous questions?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Because ambiguity invites a confident wrong answer. When a question admits several valid readings, an LLM often commits to one interpretation silently, then answers a question the asker never meant — fluently and with high confidence. The paper links this failure mode to misinterpretations, miscommunications, and hallucinations, and shows it weakens LLM use for fact-checking, question answering, feature extraction, and sentiment analysis." }
+      },
+      {
+        "@type": "Question",
+        "name": "What kinds of ambiguity cause the most trouble?",
+        "acceptedAnswer": { "@type": "Answer", "text": "In open-domain question answering, scope ambiguity: identical question structure can carry different meanings depending on which entity the question scopes over, and LLMs cannot tell which reading is intended. Adding entity context is what separates the readings — the paper's context-enrichment prompt targets exactly this." }
+      },
+      {
+        "@type": "Question",
+        "name": "What is AmbigQA?",
+        "acceptedAnswer": { "@type": "Answer", "text": "AmbigQA is an open-domain QA benchmark of ambiguous questions, sampled from Google's NQ-Open (Min et al., 2020). This paper evaluates on 1,000 ambiguous questions sampled from its train split, each with a human-disambiguated rewrite used as an upper bound." }
+      },
+      {
+        "@type": "Question",
+        "name": "Does fine-tuning help?",
         "acceptedAnswer": { "@type": "Answer", "text": "Not at the small scale we tested. Few-shot fine-tuning of GPT-4o-mini on 50 ambiguous question-answer pairs did not improve, and slightly decreased, ground-truth answer overlap (0.626 vs 0.643 naive), likely due to catastrophic forgetting. Training-free prompting was more effective." }
       },
       {
         "@type": "Question",
-        "name": "Does lowering the temperature help LLMs on ambiguous questions?",
+        "name": "Does lowering temperature help?",
         "acceptedAnswer": { "@type": "Answer", "text": "No meaningful benefit. Lowering temperature from 1.0 to 0.2 produced only minor, non-significant changes in accuracy on ambiguous questions." }
       },
       {
         "@type": "Question",
-        "name": "What dataset and models were used?",
+        "name": "What data and models were used?",
         "acceptedAnswer": { "@type": "Answer", "text": "We use AmbigQA, a subset of Google's NQ-Open, sampling 1,000 ambiguous questions from the train split. Models evaluated are OpenAI GPT-4o and GPT-4o-mini, with answers scored by cosine similarity of text-embedding-3-large embeddings against ground-truth answers." }
       }
     ]
@@ -277,6 +297,13 @@
                 </a>
               </span>
             </div>
+            <p style="margin-top:1.25rem;max-width:46rem;margin-left:auto;margin-right:auto;">
+              <b>Short answer:</b> not reliably. GPT-4o and GPT-4o-mini pick one reading of an
+              ambiguous question and answer it confidently. Two training-free, token-level prompts —
+              rewriting the question to start with <i>"what"</i>, or adding model-generated context —
+              measurably improve accuracy, with adding context best (GPT-4o: 0.759 &rarr; 0.789
+              ground-truth answer overlap on 1,000 AmbigQA questions).
+            </p>
           </div>
         </div>
       </div>
@@ -357,7 +384,7 @@
     <!-- Approach -->
     <div class="columns is-centered">
       <div class="column is-full-width">
-        <h2 class="title is-3 has-text-centered">Approach: training-free disambiguation</h2>
+        <h2 class="title is-3 has-text-centered" id="approach">Approach: training-free disambiguation</h2>
         <div class="content has-text-justified">
           <p>
             We define the task over a dataset of triples <i>(q<sub>i</sub>, q<sup>d</sup><sub>i</sub>, &acirc;<sub>i</sub>)</i>,
@@ -405,7 +432,7 @@ Question: {x}</code></pre>
     <!-- Results -->
     <div class="columns is-centered">
       <div class="column is-full-width">
-        <h2 class="title is-3 has-text-centered">Results</h2>
+        <h2 class="title is-3 has-text-centered" id="results">Results</h2>
         <div class="content has-text-justified">
           <p>
             We evaluate on 1,000 randomly sampled ambiguous questions from <b>AmbigQA</b> (a subset of
@@ -479,29 +506,58 @@ Question: {x}</code></pre>
     <!-- FAQ -->
     <div class="columns is-centered">
       <div class="column is-four-fifths">
-        <h2 class="title is-3 has-text-centered">Frequently Asked Questions</h2>
+        <h2 class="title is-3 has-text-centered" id="faq">Frequently Asked Questions</h2>
         <div class="content has-text-justified">
-          <h3 class="title is-5">Do LLMs understand ambiguity in text?</h3>
+          <h3 class="title is-5" id="faq-understand">Do LLMs understand ambiguity in text?</h3>
           <p>Not reliably. GPT-4o and GPT-4o-mini often settle on a single reading of an
              ambiguous question and answer confidently, even when the wording admits several valid
              answers. They do better once the question is disambiguated, especially in the cases
              humans also find resolvable.</p>
 
-          <h3 class="title is-5">How can you improve LLM accuracy on ambiguous questions?</h3>
+          <h3 class="title is-5" id="faq-improve">How can you improve LLM accuracy on ambiguous questions?</h3>
           <p>Use a training-free disambiguation prompt. Either rephrase the question to
              start with <i>"what"</i>, or have the model add context from its own world knowledge
              before answering. Both raise ground-truth answer overlap over naive prompting, and
-             adding context works best.</p>
+             adding context works best. The exact prompts are in the
+             <a href="#approach">approach section</a>.</p>
 
-          <h3 class="title is-5">Does fine-tuning help?</h3>
+          <h3 class="title is-5" id="faq-gains">How much does disambiguation actually improve GPT-4o?</h3>
+          <p>On 1,000 ambiguous questions from AmbigQA, GPT-4o's ground-truth answer overlap goes
+             from 0.759 (naive) to 0.778 when the question is rewritten to start with
+             <i>"what"</i>, and to 0.789 when context is added — against a human-disambiguated
+             upper bound of 0.858. GPT-4o-mini improves from 0.692 to 0.707 ("what") and 0.71
+             (context), against an upper bound of 0.783. Full numbers are in the
+             <a href="#results">results tables</a>.</p>
+
+          <h3 class="title is-5" id="faq-hallucination">Why do LLMs hallucinate on ambiguous questions?</h3>
+          <p>Because ambiguity invites a confident wrong answer. When a question admits several
+             valid readings, an LLM often commits to one interpretation silently, then answers a
+             question the asker never meant — fluently and with high confidence. The paper links
+             this failure mode to misinterpretations, miscommunications, and hallucinations, and
+             shows it weakens LLM use for fact-checking, question answering, feature extraction,
+             and sentiment analysis.</p>
+
+          <h3 class="title is-5" id="faq-scope">What kinds of ambiguity cause the most trouble?</h3>
+          <p>In open-domain question answering, <b>scope ambiguity</b>: identical question structure
+             can carry different meanings depending on which entity the question scopes over, and
+             LLMs cannot tell which reading is intended. Adding entity context is what separates
+             the readings — the paper's context-enrichment prompt targets exactly this.</p>
+
+          <h3 class="title is-5" id="faq-ambigqa">What is AmbigQA?</h3>
+          <p>AmbigQA is an open-domain QA benchmark of ambiguous questions, sampled from Google's
+             NQ-Open (Min et al., 2020). This paper evaluates on 1,000 ambiguous questions sampled
+             from its train split, each with a human-disambiguated rewrite used as an upper
+             bound.</p>
+
+          <h3 class="title is-5" id="faq-finetune">Does fine-tuning help?</h3>
           <p>Not at the scale tested. Few-shot fine-tuning of GPT-4o-mini on 50 QA pairs slightly
              reduced accuracy (0.626 vs. 0.643 naive), likely from catastrophic forgetting.</p>
 
-          <h3 class="title is-5">Does lowering temperature help?</h3>
+          <h3 class="title is-5" id="faq-temperature">Does lowering temperature help?</h3>
           <p>No meaningful benefit. Dropping temperature from 1.0 to 0.2 gives only minor,
              non-significant changes.</p>
 
-          <h3 class="title is-5">What data and models were used?</h3>
+          <h3 class="title is-5" id="faq-data">What data and models were used?</h3>
           <p>1,000 ambiguous questions sampled from <b>AmbigQA</b> (a subset of Google's NQ-Open),
              evaluated on OpenAI <b>GPT-4o</b> and <b>GPT-4o-mini</b>, scored by cosine similarity of
              <i>text-embedding-3-large</i> embeddings.</p>
@@ -538,7 +594,12 @@ Question: {x}</code></pre>
 
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
-    <h2 class="title">BibTeX</h2>
+    <h2 class="title" id="cite">BibTeX</h2>
+    <p>Plain-text citation:</p>
+    <p><i>A. Keluskar, A. Bhattacharjee and H. Liu, "Do LLMs Understand Ambiguity in Text?
+      A Case Study in Open-world Question Answering," 2024 IEEE International Conference on
+      Big Data (BigData), 2024, pp. 7485-7490, doi:
+      <a href="https://doi.org/10.1109/BigData62323.2024.10825265">10.1109/BigData62323.2024.10825265</a>.</i></p>
     <pre><code>@inproceedings{keluskar2024llms,
   title={Do llms understand ambiguity in text? a case study in open-world question answering},
   author={Keluskar, Aryan and Bhattacharjee, Amrita and Liu, Huan},
@@ -632,6 +693,14 @@ Question: {x}</code></pre>
       'Not reliably. GPT-4o and GPT-4o-mini often settle on a single reading of an ambiguous question and answer confidently, even when the wording admits several valid answers. They do better once a question is disambiguated, especially in the cases humans also find resolvable.'],
     ['How can you improve LLM accuracy on ambiguous questions?',
       'Use a training-free disambiguation prompt. Either rephrase the question to start with "what", or have the model add context from its own world knowledge before answering. Both raise ground-truth answer overlap over naive prompting, and adding context works best.'],
+    ['How much does disambiguation actually improve GPT-4o?',
+      'On 1,000 ambiguous questions from AmbigQA, GPT-4o\'s ground-truth answer overlap goes from 0.759 (naive) to 0.778 when the question is rewritten to start with "what", and to 0.789 when context is added — against a human-disambiguated upper bound of 0.858. GPT-4o-mini improves from 0.692 to 0.707 and 0.71 respectively, against an upper bound of 0.783.'],
+    ['Why do LLMs hallucinate on ambiguous questions?',
+      'Because ambiguity invites a confident wrong answer. When a question admits several valid readings, an LLM often commits to one interpretation silently, then answers a question the asker never meant — fluently and with high confidence.'],
+    ['What kinds of ambiguity cause the most trouble?',
+      'In open-domain question answering, scope ambiguity: identical question structure can carry different meanings depending on which entity the question scopes over. Adding entity context is what separates the readings.'],
+    ['What is AmbigQA?',
+      'An open-domain QA benchmark of ambiguous questions sampled from Google\'s NQ-Open (Min et al., 2020). This paper evaluates on 1,000 ambiguous questions from its train split.'],
     ['Does fine-tuning help?',
       'Not at the scale tested. Few-shot fine-tuning of GPT-4o-mini on 50 QA pairs slightly reduced accuracy (0.626 vs 0.643 naive), likely due to catastrophic forgetting.'],
     ['Does lowering temperature help?',

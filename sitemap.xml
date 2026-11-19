@@ -3,7 +3,7 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://llm-ambiguity.github.io/</loc>
-    <lastmod>2026-10-31</lastmod>
+    <lastmod>2026-11-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
     <image:image>
@@ -13,5 +13,17 @@
     <image:image>
       <image:loc>https://llm-ambiguity.github.io/static/images/og.jpg</image:loc>
     </image:image>
+  </url>
+  <url>
+    <loc>https://llm-ambiguity.github.io/press.md</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://llm-ambiguity.github.io/llms.txt</loc>
+    <lastmod>2026-11-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
 </urlset>
