@@ -1,0 +1,34 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://export.arxiv.org/api/query?id_list=2411.12395",
+      "service-doc": [
+        {
+          "href": "https://info.arxiv.org/help/api/user-manual.html",
+          "type": "text/html"
+        }
+      ]
+    },
+    {
+      "anchor": "https://api.github.com/repos/aryankeluskar/Ambig-LLM-Analysis",
+      "service-desc": [
+        {
+          "href": "https://github.com/github/rest-api-description",
+          "type": "application/json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://docs.github.com/rest",
+          "type": "text/html"
+        }
+      ],
+      "status": [
+        {
+          "href": "https://www.githubstatus.com/api/v2/status.json",
+          "type": "application/json"
+        }
+      ]
+    }
+  ]
+}

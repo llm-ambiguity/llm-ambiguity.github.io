@@ -1,0 +1,22 @@
+{
+  "issuer": "https://github.com",
+  "authorization_endpoint": "https://github.com/login/oauth/authorize",
+  "token_endpoint": "https://github.com/login/oauth/access_token",
+  "response_types_supported": ["code"],
+  "grant_types_supported": [
+    "authorization_code",
+    "urn:ietf:params:oauth:grant-type:device_code"
+  ],
+  "token_endpoint_auth_methods_supported": ["client_secret_basic", "client_secret_post"],
+  "code_challenge_methods_supported": ["S256"],
+  "scopes_supported": ["repo", "public_repo", "read:user", "user", "gist"],
+  "service_documentation": "https://llm-ambiguity.github.io/auth.md",
+  "resource": "https://llm-ambiguity.github.io/",
+  "authorization_servers": ["https://github.com"],
+  "bearer_methods_supported": ["header"],
+  "agent_auth": {
+    "skill": "https://llm-ambiguity.github.io/auth.md",
+    "register_uri": "https://github.com/settings/apps/new",
+    "identity_types_supported": ["anonymous"]
+  }
+}

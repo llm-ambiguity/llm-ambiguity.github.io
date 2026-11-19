@@ -1,0 +1,7 @@
+{
+  "resource": "https://llm-ambiguity.github.io/",
+  "authorization_servers": ["https://github.com"],
+  "scopes_supported": ["public_repo", "read:user"],
+  "bearer_methods_supported": ["header"],
+  "resource_documentation": "https://llm-ambiguity.github.io/auth.md"
+}

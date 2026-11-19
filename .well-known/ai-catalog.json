@@ -1,0 +1,61 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "Do LLMs Understand Ambiguity in Text? (IEEE BigData 2024)",
+    "identifier": "did:web:llm-ambiguity.github.io"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:llm-ambiguity.github.io:api:catalog",
+      "displayName": "API Catalog (RFC 9727)",
+      "type": "application/linkset+json",
+      "url": "https://llm-ambiguity.github.io/.well-known/api-catalog",
+      "representativeQueries": [
+        "what APIs expose this paper",
+        "find machine-readable interfaces for arXiv paper 2411.12395",
+        "how do I query the Ambig-LLM-Analysis repository programmatically"
+      ]
+    },
+    {
+      "identifier": "urn:air:llm-ambiguity.github.io:skills:index",
+      "displayName": "Agent Skills Discovery Index",
+      "type": "application/json",
+      "url": "https://llm-ambiguity.github.io/.well-known/agent-skills/index.json",
+      "representativeQueries": [
+        "disambiguate an ambiguous question before answering",
+        "get the BibTeX citation for the LLM ambiguity paper",
+        "what are the key findings of the IEEE BigData 2024 ambiguity paper"
+      ]
+    },
+    {
+      "identifier": "urn:air:llm-ambiguity.github.io:content:llms-txt",
+      "displayName": "llms.txt — paper overview for LLMs",
+      "type": "text/plain",
+      "url": "https://llm-ambiguity.github.io/llms.txt",
+      "representativeQueries": [
+        "summarize the paper about LLMs and ambiguity",
+        "what did GPT-4o score on ambiguous questions"
+      ]
+    },
+    {
+      "identifier": "urn:air:llm-ambiguity.github.io:content:press-kit",
+      "displayName": "Press kit",
+      "type": "text/markdown",
+      "url": "https://llm-ambiguity.github.io/press.md",
+      "representativeQueries": [
+        "press summary of the ambiguity paper",
+        "who has covered this research"
+      ]
+    },
+    {
+      "identifier": "urn:air:llm-ambiguity.github.io:auth:protected-resource",
+      "displayName": "OAuth Protected Resource Metadata (RFC 9728)",
+      "type": "application/json",
+      "url": "https://llm-ambiguity.github.io/.well-known/oauth-protected-resource",
+      "representativeQueries": [
+        "how do agents authenticate against this project",
+        "which authorization server issues tokens for this site"
+      ]
+    }
+  ]
+}
